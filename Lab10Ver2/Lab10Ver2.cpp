@@ -12,7 +12,7 @@ struct Student {
     char Name[100];
     char Group[100];
     int Ochenka[3];
-    int Number = 0;
+    //int Number = 0;
 };
 
 float srball(Student a) {
@@ -22,8 +22,8 @@ float srball(Student a) {
 struct Node {
     Student val;
     Node* next;
-
-    Node(Student _val) : val(_val), next(nullptr) {};
+    int number;
+    Node(Student _val) : val(_val), next(nullptr), number(1) {};
 };
 
 struct List {
@@ -42,17 +42,20 @@ struct List {
         if (is_empty()) {
             first = p;
             last = p;
+            p->number = 1;
             return;
         }
         last->next = p;
+        p->number = last->number;
         last = p;
+        last->number++;
     }
 
     void print() {
         if (is_empty()) return;
         Node* p = first;
         while (p) {
-            cout << p->val.Number << ") ФИО студента: " << p->val.Name << " - Группа студента: " << p->val.Group << " - Средний балл по 3 предметам: " << srball(p->val) << endl;
+            cout << p->number << ") ФИО студента: " << p->val.Name << " - Группа студента: " << p->val.Group << " - Средний балл по 3 предметам: " << srball(p->val) << endl;
             p = p->next;
         }
         cout << endl;
@@ -60,8 +63,8 @@ struct List {
     
     Node* find(int _val) {
         Node* p = first;
-        while (p && p->val.Number != _val) p = p->next;
-        return (p && p->val.Number == _val) ? p : nullptr;
+        while (p && p->number != _val) p = p->next;
+        return (p && p->number == _val) ? p : nullptr;
     }
 
     void remove_first() {
@@ -116,7 +119,8 @@ struct List {
         Node* p = first;
         int i = 1;
         while (p) {
-            p->val.Number=i;
+            //p->val.Number=i;
+            p->number = i;
             i++;
             p=p->next;
         }
@@ -155,7 +159,7 @@ int main()
                 cin >> dude.Ochenka[j];
             }
             cin.getline(t, N);
-            dude.Number = dude.Number+1;
+            //dude.Number = dude.Number+1;
             l.push_back(dude);
             break;
         case 2:
@@ -178,7 +182,6 @@ int main()
                     cin >> dude.Ochenka[j];
                 }
                 cin.getline(t, N);
-                dude.Number = atoi(t);
                 man = p->val;
                 p->val = dude;
                 p = p->next;
@@ -221,7 +224,7 @@ int main()
                     cin >> dude.Ochenka[j];
                 }
                 cin.getline(t, N);
-                dude.Number = atoi(t);
+                p->number = atoi(t);
                 p->val = dude;
                 l.update_numbers();
             }
@@ -249,10 +252,11 @@ int main()
             p = l.first;
             while (p) {
                 if (strcmp(p->val.Group, t) == 0) {
-                    cout << p->val.Number << ") ФИО студента: " << p->val.Name << " - Группа студента: " << p->val.Group << " - Средний балл по 3 предметам: " << srball(p->val) << endl;
+                    cout << p->number << ") ФИО студента: " << p->val.Name << " - Группа студента: " << p->val.Group << " - Средний балл по 3 предметам: " << srball(p->val) << endl;
                 }
                 p = p->next;
             }
+            cout << endl;
             break;
         case 7:
             l.first = nullptr;
