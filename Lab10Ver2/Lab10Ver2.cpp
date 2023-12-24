@@ -138,6 +138,8 @@ int main()
     bool Flag = true;
     Node* p;
     int i = 0;
+    ofstream outf;
+    ifstream inf;
     cout << "Номера команды: \n1. Добавлять элементов в конце списка\n2. Удалить студента по ФИО\n3. Вставить студента на указанную списку\n4. Отредактировать данные студента на указанные позиции\n5. Отсортировать студентов в списке по возрастанию среднего балла\n6. Вывести всех студентов указанной группы\n7. Очистить список\n8. Сохранить список в файл\n9. Загрузить список из файла\n0. Выход из программ\n";
     while (Flag) {
         cout << "Введите номер команды: ";
@@ -199,6 +201,7 @@ int main()
                     l.push_back(dude);
                 }
                 l.update_numbers();
+                i = 0;
             }
             else {
                 cout << "Данного студента нет в списках: " << endl;
@@ -247,9 +250,81 @@ int main()
             while (p) {
                 if (strcmp(p->val.Group, t) == 0) {
                     cout << p->val.Number << ") ФИО студента: " << p->val.Name << " - Группа студента: " << p->val.Group << " - Средний балл по 3 предметам: " << srball(p->val) << endl;
-
+                }
+                p = p->next;
+            }
+            break;
+        case 7:
+            l.first = nullptr;
+            l.last = nullptr;
+            break;
+        case 8:
+            cout << "Введите название файла: ";
+            cin.getline(t, N);
+            if ((t[strlen(t) - 1] == 't') && (t[strlen(t) - 2] == 'x') && (t[strlen(t) - 3] == 't') && (t[strlen(t) - 4] == '.')) {
+                outf.open(t);
+                p = l.first;
+                while (p) {
+                    outf << p->val.Name << ";" << p->val.Group << ";" << p->val.Ochenka[0] << ";" << p->val.Ochenka[1] << ";" << p->val.Ochenka[2] << endl;
+                    p = p->next;
                 }
             }
+            else {
+                outf.open(t, ios::binary);
+                p = l.first;
+                while (p) {
+                    outf.write(p->val.Name, sizeof(p->val.Name));
+                    outf.write(p->val.Group, sizeof(p->val.Group));
+                    outf.write((char*)&p->val.Ochenka[0], sizeof(p->val.Ochenka[0]));
+                    outf.write((char*)&p->val.Ochenka[1], sizeof(p->val.Ochenka[1]));
+                    outf.write((char*)&p->val.Ochenka[2], sizeof(p->val.Ochenka[2]));
+                    p = p->next;
+                }
+            }
+
+            outf.close();
+            cout << "Файл сохранён!" << endl;
+            break;
+        case 9:
+            cout << "Введите название файла: ";
+            cin.getline(t, N);
+            if ((t[strlen(t) - 1] == 't') && (t[strlen(t) - 2] == 'x') && (t[strlen(t) - 3] == 't') && (t[strlen(t) - 4] == '.')) {
+                inf.open(t);
+                if (!inf) {
+                    cout << "Нет данного файла" << endl;
+                }
+                else {
+                    while (inf.getline(t, N)) {
+                        strcpy(dude.Name, strtok(t, ";"));
+                        strcpy(dude.Group, strtok(nullptr, ";"));
+                        for (int j = 0; j < 3; j++) {
+                            dude.Ochenka[j] = atoi(strtok(nullptr, ";"));
+                        }
+                        l.push_back(dude);
+                    }
+                    l.update_numbers();
+                    i = 0;
+                }
+            }
+            else {
+                inf.open(t, ios::binary);
+                if (!inf) {
+                    cout << "Нет данного файла" << endl;
+                }
+                else {
+                    while (inf) {
+                        inf.read(dude.Name, sizeof(dude.Name));
+                        inf.read(dude.Group, sizeof(dude.Group));
+                        inf.read((char*)&dude.Ochenka[0], sizeof(dude.Ochenka[0]));
+                        inf.read((char*)&dude.Ochenka[1], sizeof(dude.Ochenka[1]));
+                        inf.read((char*)&dude.Ochenka[2], sizeof(dude.Ochenka[2]));
+                        l.push_back(dude);
+                    }
+                    l.remove_last();
+                    l.update_numbers();
+                }
+            }
+            inf.close();
             break;
         case 0:
             Flag = false;
