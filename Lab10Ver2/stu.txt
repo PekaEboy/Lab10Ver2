@@ -1,0 +1,4 @@
+Smirnova;RL1-11;70;60;70
+Sidorov;RL2-12;80;70;70
+Ivanov;RL3-13;80;90;100
+Petrova;RL2-13;100;100;100

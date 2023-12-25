@@ -12,7 +12,6 @@ struct Student {
     char Name[100];
     char Group[100];
     int Ochenka[3];
-    //int Number = 0;
 };
 
 float srball(Student a) {
@@ -34,7 +33,6 @@ struct List {
 
     bool is_empty() {
         return first == nullptr;
-        
     }
 
     void push_back(Student _val) {
@@ -60,7 +58,7 @@ struct List {
         }
         cout << endl;
     }
-    
+
     Node* find(int _val) {
         Node* p = first;
         while (p && p->number != _val) p = p->next;
@@ -88,20 +86,20 @@ struct List {
         last = p;
     }
 
-    void remove(string _val) {
+    void remove(char* _val) {
 
         if (is_empty()) return;
-        if (first->val.Name == _val) {
+        if (strcmp(first->val.Name, _val) == 0) {
             remove_first();
             return;
         }
-        else if (last->val.Name == _val) {
-    		remove_last();
+        else if (strcmp(last->val.Name, _val) == 0) {
+            remove_last();
             return;
         }
         Node* slow = first;
         Node* fast = first->next;
-        while (fast && fast->val.Name != _val) {
+        while (fast && strcmp(fast->val.Name, _val) != 0) {
             fast = fast->next;
             slow = slow->next;
         }
@@ -119,14 +117,13 @@ struct List {
         Node* p = first;
         int i = 1;
         while (p) {
-            //p->val.Number=i;
             p->number = i;
             i++;
-            p=p->next;
+            p = p->next;
         }
     }
 
-}; 
+};
 using namespace std;
 int main()
 {
@@ -144,8 +141,8 @@ int main()
     int i = 0;
     ofstream outf;
     ifstream inf;
-    cout << "Номера команды: \n1. Добавлять элементов в конце списка\n2. Удалить студента по ФИО\n3. Вставить студента на указанную списку\n4. Отредактировать данные студента на указанные позиции\n5. Отсортировать студентов в списке по возрастанию среднего балла\n6. Вывести всех студентов указанной группы\n7. Очистить список\n8. Сохранить список в файл\n9. Загрузить список из файла\n0. Выход из программ\n";
     while (Flag) {
+        cout << "Номера команды: \n1. Добавлять элементов в конце списка\n2. Удалить студента по ФИО\n3. Вставить студента на указанную списку\n4. Отредактировать данные студента на указанные позиции\n5. Отсортировать студентов в списке по возрастанию среднего балла\n6. Вывести всех студентов указанной группы\n7. Очистить список\n8. Сохранить список в файл\n9. Загрузить список из файла\n0. Выход из программ\n";
         cout << "Введите номер команды: ";
         cin.getline(vvod, 2);
         switch (atoi(vvod)) {
@@ -159,20 +156,27 @@ int main()
                 cin >> dude.Ochenka[j];
             }
             cin.getline(t, N);
-            //dude.Number = dude.Number+1;
             l.push_back(dude);
             break;
         case 2:
             cout << "Введите ФИО студента: ";
             cin.getline(dude.Name, 100);
-            l.remove(dude.Name);
+            p = l.first;
+            while (p) {
+                if (strcmp(p->val.Name, dude.Name) == 0) {
+                    i++;
+                }
+                p = p->next;
+            }
+            for (int j = 0; j < i; j++) {
+                l.remove(dude.Name);
+            }
             l.update_numbers();
             break;
         case 3:
             cout << "Введите номер студента: ";
             cin.getline(t, N);
-            p = l.find(atoi(t));
-            if (p) {
+            if (l.is_empty() && (atoi(t)==1)) {
                 cout << "Введите ФИО студента: ";
                 cin.getline(dude.Name, 100);
                 cout << "Введите группу студента: ";
@@ -182,32 +186,58 @@ int main()
                     cin >> dude.Ochenka[j];
                 }
                 cin.getline(t, N);
-                man = p->val;
-                p->val = dude;
-                p = p->next;
-                while (p) {
-                    if (i % 2 == 0) {
-                        dude = p->val;
-                        p->val = man;
-                    }
-                    else {
-                        man = p->val;
-                        p->val = dude;
-                    }
-                    p = p->next;
-                    i++;
+                l.push_back(dude);
+            } else if (!l.is_empty() && (atoi(t) == l.last->number + 1)) {
+                cout << "Введите ФИО студента: ";
+                cin.getline(dude.Name, 100);
+                cout << "Введите группу студента: ";
+                cin.getline(dude.Group, 100);
+                cout << "Введите оценка по 3 предметам студента: ";
+                for (int j = 0; j < 3; j++) {
+                    cin >> dude.Ochenka[j];
                 }
-                if (i % 2 == 0) {
-                    l.push_back(man);
-                }
-                else {
-                    l.push_back(dude);
-                }
-                l.update_numbers();
-                i = 0;
+                cin.getline(t, N);
+                l.push_back(dude);
             }
             else {
-                cout << "Данного студента нет в списках: " << endl;
+                p = l.find(atoi(t));
+                if (p) {
+                    cout << "Введите ФИО студента: ";
+                    cin.getline(dude.Name, 100);
+                    cout << "Введите группу студента: ";
+                    cin.getline(dude.Group, 100);
+                    cout << "Введите оценка по 3 предметам студента: ";
+                    for (int j = 0; j < 3; j++) {
+                        cin >> dude.Ochenka[j];
+                    }
+                    cin.getline(t, N);
+                    man = p->val;
+                    p->val = dude;
+                    p = p->next;
+                    while (p) {
+                        if (i % 2 == 0) {
+                            dude = p->val;
+                            p->val = man;
+                        }
+                        else {
+                            man = p->val;
+                            p->val = dude;
+                        }
+                        p = p->next;
+                        i++;
+                    }
+                    if (i % 2 == 0) {
+                        l.push_back(man);
+                    }
+                    else {
+                        l.push_back(dude);
+                    }
+                    l.update_numbers();
+                    i = 0;
+                }
+                else {
+                    cout << "Данного студента нет в списках: " << endl;
+                }
             }
             break;
         case 4:
@@ -290,6 +320,8 @@ int main()
             cout << "Файл сохранён!" << endl;
             break;
         case 9:
+            l.first = nullptr;
+            l.last = nullptr;
             cout << "Введите название файла: ";
             cin.getline(t, N);
             if ((t[strlen(t) - 1] == 't') && (t[strlen(t) - 2] == 'x') && (t[strlen(t) - 3] == 't') && (t[strlen(t) - 4] == '.')) {
@@ -335,7 +367,7 @@ int main()
             break;
         }
         l.print();
-
+        i = 0;
     }
     return 0;
 }
